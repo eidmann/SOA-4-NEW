@@ -13,7 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-//import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("response")
 public class GetResponse {
@@ -58,13 +57,8 @@ public class GetResponse {
 	public Response postEvent(@PathParam("title")String title,@PathParam("start")String start,
 			@PathParam("end")String end,@PathParam("date")String date,@PathParam("descr")String descr,@PathParam("loc")String loc) throws Exception {
 		System.out.println("test");
-		test3 test = new test3();
-		
-//		ArrayList<String> test3 = new ArrayList();
-//		test3.set(9, titel);
-		
-		
-				
+		App test = new App();
+			
 		test.sendCanvas(title,start,end,date,descr,loc);
 		
 		return Response.ok().build();
@@ -77,13 +71,8 @@ public class GetResponse {
 	public Response postEventForm(@FormParam("title")String title,@FormParam("start")String start,
 			@FormParam("end")String end,@FormParam("date")String date,@FormParam("descr")String descr,@FormParam("loc")String loc) throws Exception {
 		System.out.println("test");
-		test3 test = new test3();
-		
-//		ArrayList<String> test3 = new ArrayList();
-//		test3.set(9, titel);
-		
-		
-				
+		App test = new App();
+	
 		test.sendCanvas(title,start,end,date,descr,loc);
 		
 		return Response.created(URI.create("response/" + test)).build();

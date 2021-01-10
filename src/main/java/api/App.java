@@ -3,8 +3,16 @@ package main.java.api;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -14,6 +22,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class App {
+	private final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
 	
 	public String searchCourse(String courseCode) {
 		String sourceURI = "https://cloud.timeedit.net/ltu/web/schedule1/objects.txt?max=15&fr=t&partajax=t&im=f&sid=3&l=sv_SE&search_text=course&types=28";
@@ -275,5 +286,48 @@ public class App {
 		}
 		return lekt;
 	}
+	
+	public void sendCanvas(String title, String start, String end, String date, String descr, String loc) throws Exception {
 
+        Map<Object, Object> data = new HashMap<>();
+        Scanner input = new Scanner(System.in);
+
+        data.put("calendar_event[context_code]","user_65760");
+        data.put("calendar_event[title]", title);
+        data.put("calendar_event[start_at]", date+"T"+start+":00+1:00");
+        data.put("calendar_event[end_at]", date+"T"+end+":00+1:00");
+        data.put("calendar_event[description]", descr);
+        data.put("calendar_event[location_name]", loc);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(buildFormDataFromMap(data))
+                .uri(URI.create("https://ltu.instructure.com/api/v1/calendar_events.json"))
+                //.setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
+                .headers("Authorization", "Bearer 3755~79Vhe6oKEUKNCCJYVxZnydeNlqWtXGITPVKVukYeEtfvHeBquk5yLge9wwe23cyk", "Content-Type", "application/x-www-form-urlencoded")
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // print status code
+        System.out.println(response.statusCode());
+
+        // print response body
+        System.out.println(response.body());
+
+    }
+
+    private static HttpRequest.BodyPublisher buildFormDataFromMap(Map<Object, Object> data) {
+        var builder = new StringBuilder();
+        for (Map.Entry<Object, Object> entry : data.entrySet()) {
+            if (builder.length() > 0) {
+                builder.append("&");
+            }
+            builder.append(URLEncoder.encode(entry.getKey().toString(), StandardCharsets.UTF_8));
+            builder.append("=");
+            builder.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
+        }
+        System.out.println(builder.toString());
+        return HttpRequest.BodyPublishers.ofString(builder.toString());
+    }
 }
+
