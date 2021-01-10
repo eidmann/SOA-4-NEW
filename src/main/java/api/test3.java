@@ -1,29 +1,19 @@
 package main.java.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
+
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
+
 import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
+
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
+
 
 public class test3 {
 	private final HttpClient httpClient = HttpClient.newBuilder()
@@ -37,24 +27,9 @@ public static void main (String []args) throws Exception {
 }
 	 public void sendCanvas(String title, String start, String end, String date, String descr, String loc) throws Exception {
 
-	        // form parameters
-		 /*CMD 
-		 curl 'https://ltu.instructure.com/api/v1/calendar_events.json' \
-		 -X POST \
-		 -F 'calendar_event[context_code]=user_64603' \
-		 -F 'calendar_event[title]=API!' \
-		 -F 'calendar_event[start_at]=2020-12-15T17:00:00Z' \
-		 -F 'calendar_event[end_at]=2020-12-15T18:00:00Z' \
-		 -H "Authorization: Bearer 3755~KhY3fNQ6QapGhkdh0pkg0sGlMneR8ORxXHupWVTkvhLiC0uVgbXymklz6Dwkbv6N" 
-		 */
 	        Map<Object, Object> data = new HashMap<>();
 	        Scanner input = new Scanner(System.in);
-	        
-//	        data.put("calendar_event[context_code]","user_65760");
-//	        data.put("calendar_event[title]", title);
-//	        data.put("calendar_event[start_at]","2020-12-15T17:00:00Z");
-//	        data.put("calendar_event[end_at]","2020-12-15T18:00:00Z");
-//	        data.put("calendar_event[description]","2020-12-15T18:00:00Z");
+
 	        data.put("calendar_event[context_code]","user_65760");
 	        data.put("calendar_event[title]", title);
 	        data.put("calendar_event[start_at]", date+"T"+start+":00+1:00");
