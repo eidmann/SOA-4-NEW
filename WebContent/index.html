@@ -132,7 +132,7 @@
 					</thead>
 					<tbody id="Table1">
 						<tr v-for="course in courses">
-							<td><input v-on:change="loadKursEvents()" onchange="data2()"
+							<td><input v-on:change="loadKursEvents()" onclick="onlyOne(this)" onchange="data2()" name="checkCourse"
 								type="checkbox" v-model="events"></td>
 							<td>{{course.decimalId}}</td>
 							<td>{{course.value}}</td>
@@ -179,7 +179,7 @@
 					</thead>
 					<tbody id="Table2">
 						<tr v-for="event in events">
-							<td><input v-on:change="mittskit()" type="checkbox"></td>
+							<td><input v-on:change="mittskit()" onclick="onlyOnes(this)" name="checklekt" type="checkbox"></td>
 							<td>{{event.id}}</td>
 							<td>{{event.startdate}}</td>
 							<td>{{event.starttime}}-{{event.endtime}}</td>
@@ -200,7 +200,8 @@
 					</tbody>
 				</table>
 			</div>
-			<div v-for="column in columns" id="t3" style="margin-bottom: 30px">
+			<div v-for="column in columns" style="margin-bottom: 30px">
+				<div id="t3" class="row">
 				<h5>Lektion: {{column.id}}, {{column.startdate}},
 					{{column.starttime}}-{{column.endtime}}</h5>
 				<div class="row">
@@ -233,6 +234,8 @@
 						<textarea id="tx11" class="form-control">{{column.columns[11]}}</textarea>
 					</div>
 				</div>
+				<div id="t4" class="row">
+				<div class="col">
 				<label>Column 12</label>
 				<textarea id="tx12" class="form-control">{{column.columns[12]}}</textarea>
 				<br>
@@ -241,17 +244,36 @@
 			</div>
 		</div>
 	</div>
+	</div>
+	</div>
 	<script>
 	
+	function onlyOne(checkbox) {
+		var checkboxes = document.getElementsByName('checkCourse')
+	    checkboxes.forEach((item) => {
+			if (item !== checkbox) item.checked = false
+			    })
+			}
+			  function onlyOnes(checkbox) {
+				var checkboxes = document.getElementsByName('checklekt')
+			    checkboxes.forEach((item) => {
+					if (item !== checkbox) item.checked = false
+					    })
+					}
 	function data() {
-		 document.getElementById("t1").style.display = "flex";
+		document.getElementById("t1").style.display = "flex";
 		 document.getElementById("t2").style.display = "none";
+		 document.getElementById("t3").style.display = "none";
+		 document.getElementById("t4").style.display = "none";
 		}
 	function data2(){
 		document.getElementById("t2").style.display = "flex";
+		document.getElementById("t3").style.display = "none";
+		document.getElementById("t4").style.display = "none";
 		}
 	function data3(){
 		document.getElementById("t3").style.display = "flex";
+		document.getElementById("t4").style.display = "flex";
 		}
 	//hämtar kurskod från dropdown
 	var sel = document.getElementById("inputState");
@@ -278,7 +300,6 @@
    		courses: [],
    		events: [],
    		columns: [],
-   		eventsReady: [],
 //    		 modules: [], användes för att hämta module namnen till drop-listan
    	 },
    	 methods: {
@@ -294,17 +315,6 @@
 				 console.log(error);
 			 })
    		 }, 
-   		 //användes under test
-//    		loadModule: function(){
-// 			 axios.get('http://localhost:8080/HelloREST/rest/response/modbetyg/' + selMod.value)
-// 			 .then(response => {
-// 				 this.modules = response.data;
-// 				 console.log(response);
-// 			 })
-// 			 .catch(error =>{
-// 				 console.log(error);
-// 			 })
-// 		 },
 
    		 //Används för att visa resultat efter sök filter med kurs och modul
    		loadKursEvents: function(){
@@ -312,7 +322,6 @@
 //	        Reference the CheckBoxes in Table.
 	        var checkBoxes = grid.getElementsByTagName("input");
 	        //var message;
-// 	        var mod = selMod.options[selMod.selectedIndex].text;
 	 
 	        //Loop through the CheckBoxes. onödigt med loop men "funkar"
 	        for (var i = 0; i < checkBoxes.length; i++) {
@@ -326,18 +335,18 @@
 					 + selStartYear.value + selStartMonth.value+'01/' + selEndYear.value + selEndMonth.value+'31' )
 			 .then(response => {
 				 this.events = response.data;
-				 this.eventsReady = this.events;
-				 console.log(response);
+				 if(this.events === undefined || this.events.length == 0){
+					 alert("Inga lektioner hittades dem datumen!") }
+				 else{
+					 
+					 console.log(response);}
+				 
 			 })
 			 .catch(error =>{
 				 console.log(error);
 			 })
 		 },
-		 /* axios.get('http://localhost:8080/EA-SOA-Projekt/api/response/kursid/'+ message1 +'/'
-				 + selYear.value + selMonth.value+'01/' + selYear.value + selMonth.value+'31' )
-				 .then(mittskit:function(response){
-					 
-				 }); */
+
 		 mittskit: function(){
 			 var grid = document.getElementById("Table2");
 			 var checkBoxes = grid.getElementsByTagName("input");
@@ -361,71 +370,7 @@
 				 console.log(error);
 			 })
 		 },
-		 
-//    	 loadLektInfo: function(){
-//    		axios({
-//    		    method: 'POST',
-//    		    url: `https://ltu.instructure.com/api/v1/calendar_events.json`,
-//    		    data: {
-//    		    	context_code: "user_65760",
-//   				title: "Hej",
-//   				start_at: "2021-01-16T17:00:00Z",
-//   				end_at: "2021-01-16T20:00:00Z"
-//    		    },
-//    		    headers: {
-//    		       'Access-Control-Allow-Origin': '*',
-//    		       'Content-type': 'application/json',
-//    		    },
-//    		 withCredentials: true,
-//          credentials: 'same-origin',
-//    		}) 
-//    		 },
    		 
-   		postCanvas: function(){
-   		
-      		 const token = "3755~79Vhe6oKEUKNCCJYVxZnydeNlqWtXGITPVKVukYeEtfvHeBquk5yLge9wwe23cyk";
-      		 const config =  {
-      			    headers: { 
-      			    	'Authorization': `Bearer ${token}`,
-      			    	'Content-Type': 'multipart/form-data', //får fortfarande response
-//       			    	'Access-Control-Allow-Credentials': true,
-//       			    	'Access-Control-Request-Method': 'POST',
-      			    	'Access-Control-Allow-Origin': 'http://localhost:8080/',
-      			    	'Access-Control-Allow-Credentials': true,
-      			    	'X-Requested-With': 'Authorization',
-      			    	'Credential': 'X-XSRF-TOKEN'
-      			    	
-      			    	
-      			    	
-      			    	}
-      			};
-      		const bodyParameters = new FormData();
-      		bodyParameters.append("calendar_event[context_code]", "user_65760");
-      		bodyParameters.append("calendar_event[title]", "Hej");
-      		bodyParameters.append("calendar_event[start_at]", "2021-01-16T17:00:00Z");
-      		bodyParameters.append("calendar_event[end_at]", "2021-01-16T20:00:00Z");
-      		
-      		const bodyPar = {
-  	  				"context_code": "user_65760",
-  	  				"title": "Hej",
-  	  				"start_at": "2021-01-16T17:00:00Z",
-  	  				"end_at": "2021-01-16T20:00:00Z"
-  	  				};
-      				
-      			
-      		 axios.post('https://ltu.instructure.com/api/v1/calendar_events.json', bodyParameters, config) 
-      		 .then(response => {
-//       			response.addHeader("Access-Control-Allow-Origin", "*");
-//       			 response.header("Access-Control-Allow-Origin","*") ;
-//       			 response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//       			 next();
-      			 console.log(response);
-      		 }) 
-      		 .catch(error =>{ 
-      			 console.log(error.toJSON()); 
-      			 console.log(error.request);
-      		 }) 
-      		 },
       		 
       		testFunction: function(){
       			 const token = "3755~79Vhe6oKEUKNCCJYVxZnydeNlqWtXGITPVKVukYeEtfvHeBquk5yLge9wwe23cyk";
@@ -497,7 +442,7 @@
         	 	},
       loadCanvas: function(){
     	  var txt;
-	 		for (var i = 0; i < 12; i++) {
+	 		for (var i = 0; i < 13; i++) {
 	 			txt = "tx" + (i);
 	 			this.columns[0].columns[i] = document.getElementById(txt).value;
 	            }
